@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import { Filter, PersonForm, Persons } from './components/PhoneBook'
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons/")
-      .then(response => {        
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(persons => {        
+        setPersons(persons)
       })
   }, [])
 
@@ -37,12 +37,34 @@ const App = () => {
   const handleSubmit = event => {
     event.preventDefault()
 
-    if (persons.some(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+    const person = persons.find(person => person.name === newName)
+    if (person) {
+      if (window.confirm(`${person.name} is already added to phonebook, replace the old number with a new one?`)) {
+        personService
+          .update({ ...person, number: newPhoneNumber })
+          .then((updatedPerson) => {
+            setPersons(persons.map(person => person.id !== updatedPerson.id ? person : updatedPerson))
+          })
+      }
     } else {
-      setPersons(persons.concat({name: newName, number: newPhoneNumber}))
-      setNewName('')
-      setNewPhoneNumber('')
+      personService
+        .create({ name: newName, number: newPhoneNumber })
+        .then(newPerson => {
+          setPersons(persons.concat(newPerson))
+          setNewName('')
+          setNewPhoneNumber('')
+        })
+    }
+  }
+
+  const handleDelete = (id) => {
+    const person = persons.find(person => person.id === id)
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .remove(id)
+        .then((deletedPerson) => {
+          setPersons(persons.filter(person => person.id !== deletedPerson.id))
+        })
     }
   }
 
@@ -60,7 +82,7 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons persons={personsToDisplay} />
+      <Persons persons={personsToDisplay} handleDelete={id => handleDelete(id)}/>
     </div>
     
   )
