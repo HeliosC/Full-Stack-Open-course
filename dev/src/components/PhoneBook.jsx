@@ -13,12 +13,14 @@ export const PersonForm = (props) => (
     </form>
 )
 
-export const Persons = ({persons}) => (
+export const Persons = ({persons, handleDelete}) => (
     <div>
-        {persons.map(person => <Person key={person.name} person={person}/>)}
+        {persons.map(person => 
+            <Person key={person.name} person={person} handleDelete={handleDelete}/>)
+        }
     </div>
 )
 
-const Person = ({person}) => {
-    return <p>{person.name} {person.number}</p>
+const Person = ({person, handleDelete}) => {
+    return <p>{person.name} {person.number} <button onClick={() => handleDelete(person.id)}>delete</button></p>
 }
