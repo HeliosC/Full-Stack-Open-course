@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Filter, PersonForm, Persons } from './components/PhoneBook'
 import personService from './services/persons'
+import { Success, Error } from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -14,6 +15,8 @@ const App = () => {
   }, [])
 
   const [nameFilter, setNameFilter] = useState('')
+  const [successMessage, setsuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const handleFilterChange = event => {
     setNameFilter(event.target.value)
@@ -44,6 +47,8 @@ const App = () => {
           .update({ ...person, number: newPhoneNumber })
           .then((updatedPerson) => {
             setPersons(persons.map(person => person.id !== updatedPerson.id ? person : updatedPerson))
+            setsuccessMessage(`Updated ${newName}`)
+            setTimeout(() => { setsuccessMessage(null) }, 5000);  
           })
       }
     } else {
@@ -53,6 +58,8 @@ const App = () => {
           setPersons(persons.concat(newPerson))
           setNewName('')
           setNewPhoneNumber('')
+          setsuccessMessage(`Added ${newName}`)
+          setTimeout(() => { setsuccessMessage(null) }, 5000);
         })
     }
   }
@@ -65,6 +72,11 @@ const App = () => {
         .then((deletedPerson) => {
           setPersons(persons.filter(person => person.id !== deletedPerson.id))
         })
+        .catch(error => {
+          setPersons(persons.filter(deletedPerson => person.id !== deletedPerson.id))
+          setErrorMessage(`Information of ${person.name} has already been deleted from server`)
+          setTimeout(() => { setErrorMessage(null) }, 5000);
+        })
     }
   }
 
@@ -75,12 +87,14 @@ const App = () => {
       <Filter value={nameFilter} onChange={handleFilterChange} />
 
       <h3>Add a new</h3>
+      <Success message={successMessage}/>
 
       <PersonForm onSubmit={handleSubmit}
         name={newName} handleNameChange={handleNameChange} 
         number={newPhoneNumber} handlePhoneNumberChange={handlePhoneNumberChange} />
 
       <h3>Numbers</h3>
+      <Error message={errorMessage}/>
 
       <Persons persons={personsToDisplay} handleDelete={id => handleDelete(id)}/>
     </div>
