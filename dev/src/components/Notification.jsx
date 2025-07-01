@@ -9,9 +9,7 @@ export const Success = ({message}) => {
         marginTop: 16,
         marginBottom: 16,
         padding: 16
-    }
-    console.log("success", message);
-    
+    }    
 
     if(message === null) {
         return null
