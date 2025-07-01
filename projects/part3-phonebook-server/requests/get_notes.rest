@@ -1,0 +1,39 @@
+### Get info ###
+GET http://localhost:3001/info
+
+### Get all notes ###
+GET http://localhost:3001/api/persons
+
+### Get a note ###
+GET http://localhost:3001/api/persons/2
+
+### 
+GET http://localhost:3001/api/persons/abc
+
+### Delete a Note ###
+DELETE http://localhost:3001/api/persons/2
+
+### Add a Note ###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Dimitri Payet",
+    "number": "0101010101"
+}
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Dimitri Payet"
+}
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "number": "0101010101"
+}
