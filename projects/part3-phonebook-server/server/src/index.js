@@ -10,12 +10,12 @@ app.use(express.static('dist'))
 app.use(express.json())
 app.use(cors())
 
-morgan.token('body', (request, response) => JSON.stringify(request.body))
+morgan.token('body', (request) => JSON.stringify(request.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 const errorHandler = (error, request, response, next) => {
     console.error(error)
-    
+
     if(error.name === 'CastError') {
         return response.status(400).send({ error: 'Malformatted id' })
     } else if(error.name === 'ValidationError') {
@@ -25,8 +25,8 @@ const errorHandler = (error, request, response, next) => {
     next(error)
 }
 
-const unknownEndpoint = (request, response, next) => {
-    response.status(404).send({ error: 'Unknown endpoint'})
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'Unknown endpoint' })
 }
 
 app.get('/info', (request, response, next) => {
@@ -52,12 +52,12 @@ app.post('/api/persons', (request, response, next) => {
     Person.findOne({ name: body.name }).then(person => {
         if(person) {
             return response.status(400).send({ error: 'name must be unique' })
-        } else {            
+        } else {
             const person = new Person({
                 name: body.name,
                 number: body.number
             })
-        
+
             return person.save().then(savedPerson => {
                 response.json(savedPerson)
             })
@@ -86,8 +86,8 @@ app.put('/api/persons/:id', (request, response, next) => {
         .then(person => {
             if(person) {
                 return Person.findByIdAndUpdate(
-                    person.id, 
-                    { name: body.name, number: body.number }, 
+                    person.id,
+                    { name: body.name, number: body.number },
                     { new : true, runValidators: true, context: 'query' }
                 )
                     .then(udpatedPerson => {
@@ -103,14 +103,14 @@ app.put('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndDelete(request.params.id)
-        .then(result => {
+        .then(() => {
             response.status(204).end()
         })
         .catch(next)
 
     response.status(204).end()
 })
- 
+
 
 app.use(unknownEndpoint)
 app.use(errorHandler)
