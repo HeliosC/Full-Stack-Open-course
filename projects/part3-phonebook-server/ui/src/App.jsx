@@ -50,8 +50,12 @@ const App = () => {
             setsuccessMessage(`Updated ${newName}`)
             setTimeout(() => { setsuccessMessage(null) }, 5000);  
           })
+          .catch(error => {            
+            setErrorMessage(error.response.data.error)
+            setTimeout(() => { setErrorMessage(null) }, 5000);
+          })
       }
-    } else {
+    } else {      
       personService
         .create({ name: newName, number: newPhoneNumber })
         .then(newPerson => {
@@ -60,6 +64,10 @@ const App = () => {
           setNewPhoneNumber('')
           setsuccessMessage(`Added ${newName}`)
           setTimeout(() => { setsuccessMessage(null) }, 5000);
+        })
+        .catch(error => {
+          setErrorMessage(error.response.data.error)
+          setTimeout(() => { setErrorMessage(null) }, 5000);
         })
     }
   }
@@ -93,9 +101,9 @@ const App = () => {
         name={newName} handleNameChange={handleNameChange} 
         number={newPhoneNumber} handlePhoneNumberChange={handlePhoneNumberChange} />
 
-      <h3>Numbers</h3>
       <Error message={errorMessage}/>
 
+      <h3>Numbers</h3>
       <Persons persons={personsToDisplay} handleDelete={id => handleDelete(id)}/>
     </div>
     

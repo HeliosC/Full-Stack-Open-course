@@ -19,7 +19,7 @@ Content-Type: application/json
 
 {
     "name": "Dimitri Payet",
-    "number": "0101010101"
+    "number": "01-01010101"
 }
 
 ###
