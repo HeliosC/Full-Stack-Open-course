@@ -16,8 +16,8 @@ const Person = mongoose.model('Person', personSchema)
 
 mongoose
     .connect(url)
-    .then(result => {
-        if(process.argv.length == 3) {
+    .then(() => {
+        if(process.argv.length === 3) {
             return displayPeople()
         } else {
             return addPerson()
@@ -45,8 +45,8 @@ const displayPeople = async () => {
 
 const addPerson = async () => {
     if(process.argv.length < 5) {
-        console.log('Please provide the name and number as arguments: node mongo.js <password> <name> <number>')    
-        return 
+        console.log('Please provide the name and number as arguments: node mongo.js <password> <name> <number>')
+        return
     }
 
     const person = new Person({ name: process.argv[3], number: process.argv[4] })
